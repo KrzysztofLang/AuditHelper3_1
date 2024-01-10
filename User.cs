@@ -18,59 +18,74 @@ namespace AuditHelper3_1
 
         public User()
         {
+            Menu.MenuUI("Trwa tworzenie konta.;;Proszę czekać...");
+
             using (PrincipalContext pc = new PrincipalContext(ContextType.Machine))
             {
                 // Check if a user with the specified username already exists
                 UserPrincipal existingUser = UserPrincipal.FindByIdentity(pc, userName);
                 if (existingUser != null)
                 {
-                    MenuUI.UserErrorUI();
+                    Menu.MenuUI("Konto BITAdmin już istnieje w systemie.;;Naciśnij dowolny przycisk by kontynuować.");
+                    Console.ReadKey();
+                    Menu.MainMenu();
                 }
-
-                // Create the new user
-                UserPrincipal user = new UserPrincipal(pc)
+                else
                 {
-                    Name = userName,
-                    PasswordNeverExpires = true,
-                    UserCannotChangePassword = true,
-                    Enabled = true,
-                    DisplayName = fullUserName
-                };
-                password = GenerateRandomPassword;
-                user.SetPassword(password);
-                user.Save();
+                    // Create the new user
+                    UserPrincipal user = new UserPrincipal(pc)
+                    {
+                        Name = userName,
+                        PasswordNeverExpires = true,
+                        UserCannotChangePassword = true,
+                        Enabled = true,
+                        DisplayName = fullUserName
+                    };
+                    password = GenerateRandomPassword;
+                    user.SetPassword(password);
+                    user.Save();
 
-                userCreated = true;
-                try
-                {
-                    // Check if the group exists
-                    GroupPrincipal groupPL = GroupPrincipal.FindByIdentity(pc, groupNamePL);
-                    if (groupPL != null)
+                    userCreated = true;
+
+                    try
                     {
-                        // If the group exists, add the new user to the group
-                        groupPL.Members.Add(user);
-                        groupPL.Save();
-                        MenuUI.UserCreatedUI();
-                    }
-                    else
-                    {
-                        GroupPrincipal groupEN = GroupPrincipal.FindByIdentity(pc, groupNameEN);
-                        if (groupEN != null)
+                        // Check if the group exists
+                        GroupPrincipal groupPL = GroupPrincipal.FindByIdentity(pc, groupNamePL);
+                        if (groupPL != null)
                         {
                             // If the group exists, add the new user to the group
-                            groupEN.Members.Add(user);
-                            groupEN.Save();
-                            MenuUI.UserCreatedUI();
+                            groupPL.Members.Add(user);
+                            groupPL.Save();
+                            Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                            Console.ReadKey();
+                            Menu.MainMenu();
                         }
                         else
                         {
-                            MenuUI.UserGroupErrorUI();
+                            GroupPrincipal groupEN = GroupPrincipal.FindByIdentity(pc, groupNameEN);
+                            if (groupEN != null)
+                            {
+                                // If the group exists, add the new user to the group
+                                groupEN.Members.Add(user);
+                                groupEN.Save();
+                                Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                                Console.ReadKey();
+                                Menu.MainMenu();
+                            }
+                            else
+                            {
+                                Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
+                                Console.ReadKey();
+                                Menu.MainMenu();
+                            }
                         }
                     }
-                }
-                catch
-                {
-                    MenuUI.UserGroupErrorUI();
+                    catch
+                    {
+                        Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                        Console.ReadKey();
+                        Menu.MainMenu();
+                    }
                 }
             }
         }
