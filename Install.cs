@@ -27,8 +27,8 @@ namespace AuditHelper3_1
             }
             else
             {
-                //if (!installedAnyDesk) {InstallAnyDesk();}
-                //if (!installedNvision) {InstallNvision();}
+                if (!installedAnyDesk) {InstallAnyDesk();}
+                if (!installedNvision) {InstallNvision();}
 
                 Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
@@ -42,8 +42,7 @@ namespace AuditHelper3_1
             try
             {
                 Menu.MenuUI("Trwa instalowanie AnyDesk.;;Prosze czekać...");
-                string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string installerPath = Path.Combine(path, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
+                string installerPath = Path.Combine(Menu.LocalPath, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
@@ -65,9 +64,7 @@ namespace AuditHelper3_1
             try
             {
                 Menu.MenuUI("Trwa instalowanie nVision.;;Prosze czekać...");
-                string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string installerPath = Path.Combine(path, "\\Instalki\\nVAgentInstall.msi");
-
+                string installerPath = Path.Combine(Menu.LocalPath, "\\Instalki\\nVAgentInstall.msi");
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
                 process.StartInfo.Arguments = $"/i \"{installerPath}\"";

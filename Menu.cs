@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,10 +9,20 @@ namespace AuditHelper3_1
 {
     internal class Menu
     {
-        public static string MainMenu()
-        {
-            Menu.MenuUI("Wybierz funkcję:;;1) Tworzenie konta BITAdmin;2) Instalacja oprogramowania;3) Zbieranie informacji;;4) Wyjście");
+        public Data data = new Data();
+        private static string localPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
 
+        public static string LocalPath { get => localPath; set => localPath = value; }
+
+        public Menu()
+        {
+            MainMenu();
+        }
+
+        public static void MainMenu()
+        {
+            MenuUI("Wybierz funkcję:;;1) Tworzenie konta BITAdmin;2) Instalacja oprogramowania;3) Zbieranie informacji;;4) Wyjście");
+            Console.WriteLine(localPath);
             do
             {
                 switch (Console.ReadLine())

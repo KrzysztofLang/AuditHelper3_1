@@ -1,6 +1,7 @@
 ﻿
 using System.DirectoryServices.AccountManagement;
 using System.Security.Cryptography;
+using CsvHelper;
 
 
 
@@ -15,6 +16,27 @@ namespace AuditHelper3_1
         private const string groupNameEN = "Administrators";
         private bool userCreated;
         private string password = "";
+
+        private static string GenerateRandomPassword()
+        {
+            const int passwordLength = 12;
+            const string validChars =
+                "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789!@#$%&*?-";
+
+            using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+            byte[] uintBuffer = new byte[sizeof(uint)];
+
+            char[] chars = new char[passwordLength];
+            int validCharsCount = validChars.Length;
+            for (int i = 0; i < passwordLength; i++)
+            {
+                rng.GetBytes(uintBuffer);
+                uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                chars[i] = validChars[(int)(num % (uint)validCharsCount)];
+            }
+
+            return new string(chars);
+        }
 
         public User()
         {
@@ -41,7 +63,7 @@ namespace AuditHelper3_1
                         Enabled = true,
                         DisplayName = fullUserName
                     };
-                    password = GenerateRandomPassword;
+                    password = GenerateRandomPassword();
                     user.SetPassword(password);
                     user.Save();
 
@@ -90,28 +112,9 @@ namespace AuditHelper3_1
             }
         }
 
-        private static string GenerateRandomPassword
+        private void UserToFile()
         {
-            get
-            {
-                const int passwordLength = 12;
-                const string validChars =
-                    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789!@#$%&*?-";
-
-                using RandomNumberGenerator rng = RandomNumberGenerator.Create();
-                byte[] uintBuffer = new byte[sizeof(uint)];
-
-                char[] chars = new char[passwordLength];
-                int validCharsCount = validChars.Length;
-                for (int i = 0; i < passwordLength; i++)
-                {
-                    rng.GetBytes(uintBuffer);
-                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
-                    chars[i] = validChars[(int)(num % (uint)validCharsCount)];
-                }
-
-                return new string(chars);
-            }
+            return;
         }
 
         public static string UserName => userName;
