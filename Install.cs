@@ -16,8 +16,6 @@ namespace AuditHelper3_1
             if (foundAnyDesk && foundNvision)
             {
                 Menu.MenuUI("AnyDesk oraz nVision są już zainstalowane.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-                Menu.MainMenu();
             }
             else
             {
@@ -25,9 +23,11 @@ namespace AuditHelper3_1
                 if (!foundNvision) {InstallNvision(path);}
 
                 Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-                Menu.MainMenu();
             }
+
+            data.StepsTaken["programs"] = true;
+            Console.ReadKey();
+            Menu.MainMenu();
         }
 
         private static void InstallAnyDesk(string path)
@@ -36,11 +36,11 @@ namespace AuditHelper3_1
             try
             {
                 Menu.MenuUI("Trwa instalowanie AnyDesk.;;Prosze czekać...");
-                string installerPath = Path.Combine(path, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
+                string filePath = Path.Combine(path, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{installerPath}\"";
+                process.StartInfo.Arguments = $"/i \"{filePath}\"";
                 process.Start();
                 process.WaitForExit();
                 Menu.MenuUI("Zainstalowano AnyDesk.;;Naciśnij dowolny przycisk by kontynuować.");
@@ -58,10 +58,10 @@ namespace AuditHelper3_1
             try
             {
                 Menu.MenuUI("Trwa instalowanie nVision.;;Prosze czekać...");
-                string installerPath = Path.Combine(path, "\\Instalki\\nVAgentInstall.msi");
+                string filePath = Path.Combine(path, "\\Instalki\\nVAgentInstall.msi");
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{installerPath}\"";
+                process.StartInfo.Arguments = $"/i \"{filePath}\"";
                 process.Start();
                 process.WaitForExit();
 
@@ -81,11 +81,11 @@ namespace AuditHelper3_1
             {
                 Menu.MenuUI("Trwa instalowanie OpenAudit.;;Prosze czekać...");
                 
-                string installerPath = Path.Combine(path, "\\Instalki\\INSTALL.bat");
+                string filePath = Path.Combine(path, "\\Instalki\\INSTALL.bat");
 
                 Process process = new Process();
                 process.StartInfo.FileName = "cmd.exe";
-                process.StartInfo.Arguments = $"/c \"{installerPath}\"";
+                process.StartInfo.Arguments = $"/c \"{filePath}\"";
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;

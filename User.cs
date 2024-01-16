@@ -1,4 +1,9 @@
-﻿using System.DirectoryServices.AccountManagement;
+﻿using CsvHelper;
+using System.DirectoryServices.AccountManagement;
+using System.Globalization;
+using System.IO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Xml.Linq;
 
 
 
@@ -18,17 +23,13 @@ namespace AuditHelper3_1
 
             using (PrincipalContext pc = new PrincipalContext(ContextType.Machine))
             {
-                // Check if a user with the specified username already exists
                 UserPrincipal existingUser = UserPrincipal.FindByIdentity(pc, userName);
                 if (existingUser != null)
                 {
                     Menu.MenuUI("Konto BITAdmin już istnieje w systemie.;;Naciśnij dowolny przycisk by kontynuować.");
-                    Console.ReadKey();
-                    Menu.MainMenu();
                 }
                 else
                 {
-                    // Create the new user
                     UserPrincipal user = new UserPrincipal(pc)
                     {
                         Name = userName,
@@ -40,54 +41,62 @@ namespace AuditHelper3_1
                     user.SetPassword(data.Password);
                     user.Save();
 
-                    userCreated = true;
-
                     try
                     {
-                        // Check if the group exists
                         GroupPrincipal groupPL = GroupPrincipal.FindByIdentity(pc, groupNamePL);
                         if (groupPL != null)
                         {
-                            // If the group exists, add the new user to the group
                             groupPL.Members.Add(user);
                             groupPL.Save();
                             Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
-                            Console.ReadKey();
-                            Menu.MainMenu();
                         }
                         else
                         {
                             GroupPrincipal groupEN = GroupPrincipal.FindByIdentity(pc, groupNameEN);
                             if (groupEN != null)
                             {
-                                // If the group exists, add the new user to the group
                                 groupEN.Members.Add(user);
                                 groupEN.Save();
                                 Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
-                                Console.ReadKey();
-                                Menu.MainMenu();
                             }
                             else
                             {
                                 Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
-                                Console.ReadKey();
-                                Menu.MainMenu();
                             }
                         }
                     }
                     catch
                     {
                         Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
-                        Console.ReadKey();
-                        Menu.MainMenu();
                     }
                 }
             }
+
+            data.StepsTaken["user"] = true;
+            UserToFile(data);
+            Console.ReadKey();
+            Menu.MainMenu();
         }
 
-        private void UserToFile()
+        private static void UserToFile(Data data)
         {
-            return;
+            Menu.MenuUI("Trwa zapisywanie pliku.;;Proszę czekać...");
+
+            string filePath = Path.Combine(data.LocalPath, "\\pwd_XXX");
+
+            using (var writer = new StreamWriter(filePath, append: true))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                if (File.Exists(filePath))
+                {
+                    string[] columns = { "collections", "type", "name", "notes", "fields", "reprompt", "login_uri", "login_username", "login_password", "login_totp" };
+                    foreach (var item in columns) { csv.WriteField(item); }
+                    csv.NextRecord();                    
+                }
+                string[] values = { "XXX", "login", "XXX-YYYZZ", "", "", "", "", "BITAdmin", "qwerty123456" };
+                foreach (var item in values) { csv.WriteField(item); }
+                csv.NextRecord();
+            }
         }
     }
 }

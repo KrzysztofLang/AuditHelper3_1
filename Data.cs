@@ -18,15 +18,22 @@ namespace AuditHelper3_1
         private static string? userName;
         private static string? comment;
 
+        private static Dictionary<string, bool> stepsTaken = new Dictionary<string, bool>();
+
         public string LocalPath { get => localPath; }
         public string Password { get => password; }
         public string? DeviceName { get => deviceName; set => deviceName = value; }
+        public Dictionary<string, bool> StepsTaken { get => stepsTaken; set => stepsTaken = value; }
+
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int WNetGetConnection([MarshalAs(UnmanagedType.LPTStr)] string localName, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName, ref int length);
 
         public Data()
         {
+            stepsTaken.Add("info", false);
+            stepsTaken.Add("user", false);
+            stepsTaken.Add("programs", false);
         }
 
         public static void GetInfo()
@@ -46,6 +53,7 @@ namespace AuditHelper3_1
                     case "1":
                         break;
                     default:
+                        stepsTaken["info"] = true;
                         Menu.MainMenu();
                         break;
                 }
@@ -54,9 +62,9 @@ namespace AuditHelper3_1
 
         private static string GetAnyDeskID()
         {
-            string scriptPath = Path.Combine(localPath, "\\AnyDeskID.bat");
+            string filePath = Path.Combine(localPath, "\\AnyDeskID.bat");
 
-            using (StreamWriter sw = new StreamWriter(scriptPath))
+            using (StreamWriter sw = new StreamWriter(filePath))
             {
                 sw.WriteLine("@echo off");
                 sw.WriteLine("path=C:\\Program Files (x86)\\AnyDesk-c035baa3;%path%");
@@ -66,7 +74,7 @@ namespace AuditHelper3_1
 
             Process process = new Process();
             process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = $"/c \"{scriptPath}\"";
+            process.StartInfo.Arguments = $"/c \"{filePath}\"";
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = true;
@@ -74,7 +82,7 @@ namespace AuditHelper3_1
             string anyDeskID = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
-            File.Delete(scriptPath);
+            File.Delete(filePath);
 
             return anyDeskID;
         }

@@ -1,4 +1,6 @@
-﻿namespace AuditHelper3_1
+﻿using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+
+namespace AuditHelper3_1
 {
     internal class Menu
     {
@@ -11,31 +13,33 @@
 
         public static void MainMenu()
         {
-            MenuUI("Wybierz funkcję:;;1) Tworzenie konta BITAdmin;2) Instalacja oprogramowania;3) Zbieranie informacji;;4) Wyjście");
+            MenuUI("Wybierz funkcję:;;1) Zbieranie informacji;2) Tworzenie konta BITAdmin;3) Instalacja oprogramowania;;4) Wyjście");
             Console.WriteLine(data.LocalPath);
-            Console.WriteLine(data.DeviceName);
+            
+            foreach (var item in data.StepsTaken)
+            {
+                Console.WriteLine("W menu:");
+                Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
+            }
+
             do
             {
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        // Tworzenie konta BITAdmin
-                        User.CreateUser(data);
-                        break;
-                    case "2":
-                        // Instalacja oprogramowania
-                        Install.InstallPrograms(data);
-                        break;
-                    case "3":
-                        // Zbieranie informacji
                         Data.GetInfo();
                         break;
+                    case "2":
+                        User.CreateUser(data);
+                        break;
+                    case "3":
+                        Install.InstallPrograms(data);
+                        break;
                     case "4":
-                        // Wyjście
                         Environment.Exit(0);
                         break;
                     default:
-                        Menu.MenuUI("Wybierz funkcję:;;1) Tworzenie konta BITAdmin;2) Instalacja oprogramowania;3) Zbieranie informacji;;4) Wyjście");
+                        Menu.MenuUI("Wybierz funkcję:;;1) Zbieranie informacji;2) Tworzenie konta BITAdmin;3) Instalacja oprogramowania;;4) Wyjście");
                         break;
                 }
             }
