@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Management;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AuditHelper3_1
 {
     internal class Install
     {
-        private bool installedAnyDesk = false;
-        private bool installedNvision = false;
-
-        public Install()
+        public static void InstallPrograms(Data data)
         {
-            CheckInstalled();
-            InstallOpenAudit();
+            string path = data.LocalPath;
 
-            if (installedAnyDesk && installedNvision)
+            var (foundAnyDesk, foundNvision) = CheckInstalled();
+
+            InstallOpenAudit(path);
+
+            if (foundAnyDesk && foundNvision)
             {
                 Menu.MenuUI("AnyDesk oraz nVision są już zainstalowane.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
@@ -27,8 +21,8 @@ namespace AuditHelper3_1
             }
             else
             {
-                if (!installedAnyDesk) {InstallAnyDesk();}
-                if (!installedNvision) {InstallNvision();}
+                if (!foundAnyDesk) {InstallAnyDesk(path);}
+                if (!foundNvision) {InstallNvision(path);}
 
                 Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
@@ -36,13 +30,13 @@ namespace AuditHelper3_1
             }
         }
 
-        private void InstallAnyDesk()
+        private static void InstallAnyDesk(string path)
         {
 
             try
             {
                 Menu.MenuUI("Trwa instalowanie AnyDesk.;;Prosze czekać...");
-                string installerPath = Path.Combine(Menu.LocalPath, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
+                string installerPath = Path.Combine(path, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
@@ -59,12 +53,12 @@ namespace AuditHelper3_1
             }
         }
 
-        private void InstallNvision()
+        private static void InstallNvision(string path)
         {
             try
             {
                 Menu.MenuUI("Trwa instalowanie nVision.;;Prosze czekać...");
-                string installerPath = Path.Combine(Menu.LocalPath, "\\Instalki\\nVAgentInstall.msi");
+                string installerPath = Path.Combine(path, "\\Instalki\\nVAgentInstall.msi");
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
                 process.StartInfo.Arguments = $"/i \"{installerPath}\"";
@@ -81,12 +75,12 @@ namespace AuditHelper3_1
             }
         }
 
-        private void InstallOpenAudit()
+        private static void InstallOpenAudit(string path)
         {
             try
             {
                 Menu.MenuUI("Trwa instalowanie OpenAudit.;;Prosze czekać...");
-                string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                
                 string installerPath = Path.Combine(path, "\\Instalki\\INSTALL.bat");
 
                 Process process = new Process();
@@ -108,11 +102,15 @@ namespace AuditHelper3_1
             }
         }
 
-        private void CheckInstalled()
+        private static Tuple<bool, bool> CheckInstalled()
         {
             Menu.MenuUI("Trwa weryfikacja zainstalowanych programów.;;Proszę czekać...");
 
+            bool installedAnyDesk = false;
+            bool installedNvision = false;
+
             ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_Product");
+
             foreach (ManagementObject mo in mos.Get())
             {
                 if (mo["Name"] != null)
@@ -128,6 +126,8 @@ namespace AuditHelper3_1
                     }
                 }
             }
+
+            return Tuple.Create(installedAnyDesk, installedNvision);
         }
     }
 }

@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AuditHelper3_1
+﻿namespace AuditHelper3_1
 {
     internal class Menu
     {
-        public Data data = new Data();
-        private static string localPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
-
-        public static string LocalPath { get => localPath; set => localPath = value; }
+        public static Data data = new Data();
 
         public Menu()
         {
@@ -22,22 +12,23 @@ namespace AuditHelper3_1
         public static void MainMenu()
         {
             MenuUI("Wybierz funkcję:;;1) Tworzenie konta BITAdmin;2) Instalacja oprogramowania;3) Zbieranie informacji;;4) Wyjście");
-            Console.WriteLine(localPath);
+            Console.WriteLine(data.LocalPath);
+            Console.WriteLine(data.DeviceName);
             do
             {
                 switch (Console.ReadLine())
                 {
                     case "1":
                         // Tworzenie konta BITAdmin
-                        User user = new();
+                        User.CreateUser(data);
                         break;
                     case "2":
                         // Instalacja oprogramowania
-                        Install install = new();
+                        Install.InstallPrograms(data);
                         break;
                     case "3":
                         // Zbieranie informacji
-                        Menu.MenuUI("Funkcja w przygotowaniu.;;Naciśnij dowolny przycisk by kontynuować.");
+                        Data.GetInfo();
                         break;
                     case "4":
                         // Wyjście
@@ -75,11 +66,8 @@ namespace AuditHelper3_1
                 Console.WriteLine("║    " + line + spaces + '║');
             }
 
-            for (int i = 0; i < 11 - textLines.Length; i++)
-            {
-                Console.WriteLine("║                                                                             ║");
-            }
-
+            Console.WriteLine("║                                                                             ║");
+            Console.WriteLine("║                                                                             ║");
             Console.WriteLine("╚═════════════════════════════════════════════════════════════════════════════╝");
         }
     }

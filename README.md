@@ -16,7 +16,7 @@ Program ma za zadanie u³atwiæ przeprowadzanie audytu lokalnego poprzez automatyz
 1. Dodanie do harmonogramu systemu zadania audytuj¹cego do OpenAudit
 1. Automatyczne zebranie informacji:
     1. Hostname
-    1. Mapowane udzia³y sieciowe
+    1. ~~Mapowane udzia³y sieciowe~~
     1. AnyDesk ID
 1. Wprowadzenie informacji przez personel:
     1. Nadana nazwa urz¹dzenia

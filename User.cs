@@ -1,7 +1,4 @@
-﻿
-using System.DirectoryServices.AccountManagement;
-using System.Security.Cryptography;
-using CsvHelper;
+﻿using System.DirectoryServices.AccountManagement;
 
 
 
@@ -9,37 +6,14 @@ namespace AuditHelper3_1
 {
     internal class User
     {
-        // Nazwa użytkownika
-        private const string userName = "BITAdmin_test";
-        private const string fullUserName = "Administrator lokalny BetterIT";
-        private const string groupNamePL = "Administratorzy";
-        private const string groupNameEN = "Administrators";
-        private bool userCreated;
-        private string password = "";
-
-        private static string GenerateRandomPassword()
+        public static void CreateUser(Data data)
         {
-            const int passwordLength = 12;
-            const string validChars =
-                "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789!@#$%&*?-";
+            string userName = "BITAdmin_test";
+            string fullUserName = "Administrator lokalny BetterIT";
+            string groupNamePL = "Administratorzy";
+            string groupNameEN = "Administrators";
+            bool userCreated;
 
-            using RandomNumberGenerator rng = RandomNumberGenerator.Create();
-            byte[] uintBuffer = new byte[sizeof(uint)];
-
-            char[] chars = new char[passwordLength];
-            int validCharsCount = validChars.Length;
-            for (int i = 0; i < passwordLength; i++)
-            {
-                rng.GetBytes(uintBuffer);
-                uint num = BitConverter.ToUInt32(uintBuffer, 0);
-                chars[i] = validChars[(int)(num % (uint)validCharsCount)];
-            }
-
-            return new string(chars);
-        }
-
-        public User()
-        {
             Menu.MenuUI("Trwa tworzenie konta.;;Proszę czekać...");
 
             using (PrincipalContext pc = new PrincipalContext(ContextType.Machine))
@@ -63,8 +37,7 @@ namespace AuditHelper3_1
                         Enabled = true,
                         DisplayName = fullUserName
                     };
-                    password = GenerateRandomPassword();
-                    user.SetPassword(password);
+                    user.SetPassword(data.Password);
                     user.Save();
 
                     userCreated = true;
@@ -78,7 +51,7 @@ namespace AuditHelper3_1
                             // If the group exists, add the new user to the group
                             groupPL.Members.Add(user);
                             groupPL.Save();
-                            Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                            Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
                             Console.ReadKey();
                             Menu.MainMenu();
                         }
@@ -90,7 +63,7 @@ namespace AuditHelper3_1
                                 // If the group exists, add the new user to the group
                                 groupEN.Members.Add(user);
                                 groupEN.Save();
-                                Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                                Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;oraz nadano uprawnienia administratora.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
                                 Console.ReadKey();
                                 Menu.MainMenu();
                             }
@@ -104,7 +77,7 @@ namespace AuditHelper3_1
                     }
                     catch
                     {
-                        Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Hasło: " + password + ";;Naciśnij dowolny przycisk by kontynuować.");
+                        Menu.MenuUI("Pomyślnie utworzono konto BITAdmin;lecz nie udało się nadać uprawnień administratora.;Spróbuj nadać je ręcznie.;;Hasło: " + data.Password + ";;Naciśnij dowolny przycisk by kontynuować.");
                         Console.ReadKey();
                         Menu.MainMenu();
                     }
@@ -116,10 +89,5 @@ namespace AuditHelper3_1
         {
             return;
         }
-
-        public static string UserName => userName;
-        public static string FullUserName => fullUserName;
-        public string Password { get => password; }
-        public bool UserCreated { get => userCreated; set => userCreated = value; }
     }
 }
