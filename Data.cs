@@ -22,8 +22,8 @@ namespace AuditHelper3_1
 
         public string LocalPath { get => localPath; }
         public string Password { get => password; }
-        public string? DeviceName { get => deviceName; set => deviceName = value; }
-        public Dictionary<string, bool> StepsTaken { get => stepsTaken; set => stepsTaken = value; }
+        public string? DeviceName { get => deviceName; }
+        public Dictionary<string, bool> StepsTaken { get => stepsTaken; }
 
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -36,7 +36,7 @@ namespace AuditHelper3_1
             stepsTaken.Add("programs", false);
         }
 
-        public static void GetInfo()
+        public static void GetInfo(bool returnToMenu = true)
         {
             while(true)
             {
@@ -54,9 +54,11 @@ namespace AuditHelper3_1
                         break;
                     default:
                         stepsTaken["info"] = true;
-                        Menu.MainMenu();
+                        if (returnToMenu) { Menu.MainMenu(); }                       
                         break;
                 }
+
+                break;
             }
         }
 

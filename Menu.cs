@@ -13,14 +13,10 @@ namespace AuditHelper3_1
 
         public static void MainMenu()
         {
-            MenuUI("Wybierz funkcję:;;1) Zbieranie informacji;2) Tworzenie konta BITAdmin;3) Instalacja oprogramowania;;4) Wyjście");
-            Console.WriteLine(data.LocalPath);
-            
-            foreach (var item in data.StepsTaken)
-            {
-                Console.WriteLine("W menu:");
-                Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
-            }
+            MenuUI($"Wybierz funkcję:;;1) Zbieranie informacji      {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
+                $"2) Tworzenie konta BITAdmin  {(data.StepsTaken["user"] ? "(gotowe)" : "")};" + 
+                $"3) Instalacja oprogramowania {(data.StepsTaken["programs"] ? "(gotowe)" : "")};;" + 
+                $"4) Wyjście");
 
             do
             {
@@ -39,7 +35,7 @@ namespace AuditHelper3_1
                         Environment.Exit(0);
                         break;
                     default:
-                        Menu.MenuUI("Wybierz funkcję:;;1) Zbieranie informacji;2) Tworzenie konta BITAdmin;3) Instalacja oprogramowania;;4) Wyjście");
+                        MainMenu();
                         break;
                 }
             }

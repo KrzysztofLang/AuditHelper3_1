@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Management;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AuditHelper3_1
 {
