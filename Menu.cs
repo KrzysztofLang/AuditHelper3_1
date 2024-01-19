@@ -13,23 +13,33 @@ namespace AuditHelper3_1
 
         public static void MainMenu()
         {
-            MenuUI($"Wybierz funkcję:;;1) Zbieranie informacji      {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
-                $"2) Tworzenie konta BITAdmin  {(data.StepsTaken["user"] ? "(gotowe)" : "")};" + 
-                $"3) Instalacja oprogramowania {(data.StepsTaken["programs"] ? "(gotowe)" : "")};;" + 
-                $"4) Wyjście");
+            MenuUI($"{(data.StepsTaken["programs"]||data.StepsTaken["info"]||data.StepsTaken["user"] ? "Wybierz kolejną funkcję:;;" : "Wciśnij enter aby przprowadzić pełny audyt, lub wybierz funkcję:;;")}" +
+                $"1) Instalacja oprogramowania {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
+                $"2) Zbieranie informacji      {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
+                $"3) Tworzenie konta BITAdmin  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" + 
+                $"4) Wyjście" +
+                $";;;Lokalizacja programu:;;{(data.LocalPath)}");
 
             do
             {
                 switch (Console.ReadLine())
                 {
+                    case "":
+                        Install.InstallPrograms(data, fullAudit: true);
+                        Data.GetInfo(fullAudit: true);
+                        User.CreateUser(data, fullAudit: true);
+                        MenuUI("Audyt zakończony.;;Naciśnij dowolny klawisz by zamknąć.");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
                     case "1":
-                        Data.GetInfo();
+                        Install.InstallPrograms(data);
                         break;
                     case "2":
-                        User.CreateUser(data);
+                        Data.GetInfo();
                         break;
                     case "3":
-                        Install.InstallPrograms(data);
+                        User.CreateUser(data);
                         break;
                     case "4":
                         Environment.Exit(0);
@@ -62,8 +72,34 @@ namespace AuditHelper3_1
             string[] textLines = text.Split(';');
             foreach (string line in textLines)
             {
-                string spaces = new string(' ', 73 - line.Length);
-                Console.WriteLine("║    " + line + spaces + '║');
+                //string spaces = new string(' ', 73 - line.Length);
+                //Console.WriteLine("║    " + line + spaces + '║');
+
+                if (line.Length <= 69)
+                {
+                    string spaces = new string(' ', 73 - line.Length);
+                    Console.WriteLine("║    " + line + spaces + '║');
+                }
+                else
+                {
+                    int startIndex = 0;
+                    while (startIndex < line.Length)
+                    {
+                        int length = Math.Min(69, line.Length - startIndex);
+                        if (length < line.Length - startIndex && line[startIndex + length] != ' ')
+                        {
+                            int lastSpace = line.LastIndexOf(' ', startIndex + length, length);
+                            if (lastSpace > startIndex)
+                            {
+                                length = lastSpace - startIndex;
+                            }
+                        }
+                        string subLine = line.Substring(startIndex, length);
+                        string spaces = new string(' ', 73 - subLine.Length);
+                        Console.WriteLine("║    " + subLine + spaces + '║');
+                        startIndex += length + 1;
+                    }
+                }
             }
 
             Console.WriteLine("║                                                                             ║");

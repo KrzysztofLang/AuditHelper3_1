@@ -6,7 +6,7 @@ namespace AuditHelper3_1
 {
     internal class Install
     {
-        public static void InstallPrograms(Data data)
+        public static void InstallPrograms(Data data, bool fullAudit = false)
         {
             string path = data.LocalPath;
 
@@ -20,58 +20,35 @@ namespace AuditHelper3_1
             }
             else
             {
-                if (!foundAnyDesk) {InstallAnyDesk(path);}
-                if (!foundNvision) {InstallNvision(path);}
+                if (!foundAnyDesk) {InstallProgram(path, "AnyDesk", "AnyDesk_BetterIT_ACL.msi");}
+                if (!foundNvision) {InstallProgram(path, "nVision", "nVAgentInstall.msi");}
 
                 Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
             }
 
             data.StepsTaken["programs"] = true;
             Console.ReadKey();
-            Menu.MainMenu();
+            if (fullAudit) return; else Menu.MainMenu();
         }
 
-        private static void InstallAnyDesk(string path)
+        private static void InstallProgram(string path, string programName, string installerName)
         {
-
             try
             {
-                Menu.MenuUI("Trwa instalowanie AnyDesk.;;Prosze czekać...");
-                string filePath = Path.Combine(path, "\\Instalki\\AnyDesk_BetterIT_ACL.msi");
+                Menu.MenuUI($"Trwa instalowanie {(programName)}.;;Proszę czekać...");
+                string filePath = Path.Combine(path, $"\\Instalki\\{(installerName)}");
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
                 process.StartInfo.Arguments = $"/i \"{filePath}\"";
                 process.Start();
                 process.WaitForExit();
-                Menu.MenuUI("Zainstalowano AnyDesk.;;Naciśnij dowolny przycisk by kontynuować.");
+                Menu.MenuUI($"Zainstalowano {(programName)}.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
             }
             catch
             {
-                Menu.MenuUI("Napotkano problem podczas instalacji AnyDesk.;Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-            }
-        }
-
-        private static void InstallNvision(string path)
-        {
-            try
-            {
-                Menu.MenuUI("Trwa instalowanie nVision.;;Prosze czekać...");
-                string filePath = Path.Combine(path, "\\Instalki\\nVAgentInstall.msi");
-                Process process = new Process();
-                process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{filePath}\"";
-                process.Start();
-                process.WaitForExit();
-
-                Menu.MenuUI("Zainstalowano nVision.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-            }
-            catch
-            {
-                Menu.MenuUI("Napotkano problem podczas instalacji nVision.;Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
+                Menu.MenuUI($"Napotkano problem podczas instalacji {(programName)}. Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
             }
         }
@@ -98,7 +75,7 @@ namespace AuditHelper3_1
             }
             catch
             {
-                Menu.MenuUI("Napotkano problem podczas instalacji OpenAudit.;Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
+                Menu.MenuUI("Napotkano problem podczas instalacji OpenAudit. Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
                 Console.ReadKey();
             }
         }
@@ -114,18 +91,14 @@ namespace AuditHelper3_1
 
             foreach (ManagementObject mo in mos.Get())
             {
-                if (mo["Name"] != null)
-                {
-                    if (mo["Name"].ToString().Contains("AnyDesk BetterIT"))
-                    {
-                        installedAnyDesk = true;
-                    }
+                string? name = mo["Name"]?.ToString();
 
-                    if (mo["Name"].ToString().Contains("nVision Agent"))
-                    {
-                        installedNvision = true;
-                    }
-                }
+                if (name == null) continue;
+
+                installedAnyDesk |= name.Contains("AnyDesk BetterIT");
+                installedNvision |= name.Contains("nVision Agent");
+
+                if (installedAnyDesk && installedNvision) break;
             }
 
             return Tuple.Create(installedAnyDesk, installedNvision);
