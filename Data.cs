@@ -12,8 +12,6 @@ namespace AuditHelper3_1
 {
     internal class Data
     {
-        private static string localPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
-
         private static string hostname = System.Environment.MachineName;
         private string password = GenerateRandomPassword();
 
@@ -24,7 +22,6 @@ namespace AuditHelper3_1
 
         private static Dictionary<string, bool> stepsTaken = new Dictionary<string, bool>();
 
-        public string LocalPath { get => localPath; }
         public string Password { get => password; }
         public string? DeviceName { get => deviceName; }
         public Dictionary<string, bool> StepsTaken { get => stepsTaken; }
@@ -42,42 +39,49 @@ namespace AuditHelper3_1
 
         public static void GetInfo(bool returnToMenu = true, bool fullAudit = false)
         {
-                anyDeskID = GetAnyDeskID();
+            anyDeskID = GetAnyDeskID();
+            Console.WriteLine(anyDeskID);
+            Console.ReadLine();
 
-                Menu.MenuUI("Podaj nazwę BetterIT:");
-                deviceName = Console.ReadLine();
+            Menu.MenuUI("Podaj nazwę BetterIT:");
+            deviceName = Console.ReadLine();
 
-                Menu.MenuUI("Podaj użytkownika odpowiedzialnego:");
-                userName = Console.ReadLine();
+            Menu.MenuUI("Podaj użytkownika odpowiedzialnego:");
+            userName = Console.ReadLine();
 
-                Menu.MenuUI("Podaj opcjonalny komentarz:");
-                comment = Console.ReadLine();
+            Menu.MenuUI("Podaj opcjonalny komentarz:");
+            comment = Console.ReadLine();
 
-                Menu.MenuUI("Podsumowanie:;;Nazwa: " + deviceName + ";Użytkownik: " + userName + ";Komentarz: " + comment +
-                    ";;Wpisz \"1\" by poprawić bądź naciśnij inny przycisk by kontynuować.");
+            Menu.MenuUI("Podsumowanie:;;Nazwa: " + deviceName + ";Użytkownik: " + userName + ";Komentarz: " + comment +
+                ";;Wpisz \"1\" by poprawić bądź naciśnij inny przycisk by kontynuować.");
 
-                switch (Console.ReadLine())
-                {
-                    case "1":
-                        GetInfo();
-                        break;
-                    default:
-                        stepsTaken["info"] = true;
-                        string[] columns = { "Hostname", "Nazwa BetterIT", "User", "Uwagi", "AnyDesk ID" };
-                        string[] values = { hostname, deviceName ?? "", userName ?? "", comment ?? "", anyDeskID };
+            Console.WriteLine(anyDeskID);
 
-                        SaveFile("dane", columns, values);
-                        if (returnToMenu)
-                        {
-                            if (fullAudit) return; else Menu.MainMenu();
-                        }                       
-                        break;
-                }
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    GetInfo();
+                    break;
+                default:
+                    stepsTaken["info"] = true;
+
+                    string[] columns = { "Hostname", "Nazwa BetterIT", "User", "Uwagi", "AnyDesk ID" };
+                    string[] values = { hostname, deviceName ?? "", userName ?? "", comment ?? "", anyDeskID };
+
+                    SaveFile("dane", columns, values);
+
+                    if (returnToMenu)
+                    {
+                        if (fullAudit) return; else Menu.MainMenu();
+                    }                       
+
+                    break;
+            }
         }
 
         private static string GetAnyDeskID()
         {
-            string filePath = Path.Combine(localPath, "\\AnyDeskID.bat");
+            string filePath = Path.GetFullPath($"AnyDeskID.bat");
 
             using (StreamWriter sw = new StreamWriter(filePath))
             {
@@ -98,6 +102,7 @@ namespace AuditHelper3_1
             process.WaitForExit();
 
             File.Delete(filePath);
+
 
             return anyDeskID;
         }
@@ -134,7 +139,7 @@ namespace AuditHelper3_1
 
             Menu.MenuUI("Trwa zapisywanie do pliku.;;Proszę czekać...");
 
-            string filePath = Path.Combine(localPath, $"{(deviceName.Substring(0, 3))}_{(fileName)}.csv");
+            string filePath = Path.GetFullPath($@"{(deviceName.Substring(0, 3))}_{(fileName)}.csv");
 
             bool fileExists = File.Exists(filePath);
 

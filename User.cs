@@ -15,7 +15,7 @@ namespace AuditHelper3_1
         {
             string userName = "BITAdmin_test";
             string fullUserName = "Administrator lokalny BetterIT";
-            string groupNamePL = "Administratorzy";
+            string groupNamePL = "Administratorzy"; 
             string groupNameEN = "Administrators";
 
             Menu.MenuUI("Trwa tworzenie konta.;;Proszę czekać...");

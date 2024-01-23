@@ -8,11 +8,10 @@ namespace AuditHelper3_1
     {
         public static void InstallPrograms(Data data, bool fullAudit = false)
         {
-            string path = data.LocalPath;
 
             var (foundAnyDesk, foundNvision) = CheckInstalled();
 
-            InstallOpenAudit(path);
+            InstallOpenAudit();
 
             if (foundAnyDesk && foundNvision)
             {
@@ -20,8 +19,8 @@ namespace AuditHelper3_1
             }
             else
             {
-                if (!foundAnyDesk) {InstallProgram(path, "AnyDesk", "AnyDesk_BetterIT_ACL.msi");}
-                if (!foundNvision) {InstallProgram(path, "nVision", "nVAgentInstall.msi");}
+                if (!foundAnyDesk) {InstallProgram("AnyDesk", "AnyDesk_BetterIT_ACL.msi");}
+                if (!foundNvision) {InstallProgram("nVision", "nVAgentInstall.msi");}
 
                 Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
             }
@@ -31,16 +30,17 @@ namespace AuditHelper3_1
             if (fullAudit) return; else Menu.MainMenu();
         }
 
-        private static void InstallProgram(string path, string programName, string installerName)
+        private static void InstallProgram(string programName, string installerName)
         {
             try
             {
                 Menu.MenuUI($"Trwa instalowanie {(programName)}.;;Proszę czekać...");
-                string filePath = Path.Combine(path, $"\\Instalki\\{(installerName)}");
+                string filePath = Path.GetFullPath($@"Instalki\{(installerName)}");
+                Console.WriteLine(filePath);
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{filePath}\"";
+                process.StartInfo.Arguments = $"/i \"{(filePath)}\"";
                 process.Start();
                 process.WaitForExit();
                 Menu.MenuUI($"Zainstalowano {(programName)}.;;Naciśnij dowolny przycisk by kontynuować.");
@@ -53,13 +53,14 @@ namespace AuditHelper3_1
             }
         }
 
-        private static void InstallOpenAudit(string path)
+        private static void InstallOpenAudit()
         {
             try
             {
                 Menu.MenuUI("Trwa instalowanie OpenAudit.;;Prosze czekać...");
                 
-                string filePath = Path.Combine(path, "\\Instalki\\INSTALL.bat");
+                string filePath = Path.GetFullPath($@"Instalki\INSTALL.bat");
+                Console.WriteLine(filePath);
 
                 Process process = new Process();
                 process.StartInfo.FileName = "cmd.exe";
@@ -71,6 +72,7 @@ namespace AuditHelper3_1
                 process.WaitForExit();
 
                 Menu.MenuUI("Zainstalowano OpenAudit.;;Naciśnij dowolny przycisk by kontynuować.");
+                Console.WriteLine(filePath);
                 Console.ReadKey();
             }
             catch

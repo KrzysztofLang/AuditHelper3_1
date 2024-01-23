@@ -17,8 +17,7 @@ namespace AuditHelper3_1
                 $"1) Instalacja oprogramowania {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
                 $"2) Zbieranie informacji      {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
                 $"3) Tworzenie konta BITAdmin  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" + 
-                $"4) Wyjście" +
-                $";;;Lokalizacja programu:;;{(data.LocalPath)}");
+                $"4) Wyjście");
 
             do
             {
@@ -56,18 +55,18 @@ namespace AuditHelper3_1
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("╔═════════════════════════════════════════════════════════════════════════════╗");
-            Console.WriteLine("║                         _ _ _   _    _      _                ____  __       ║");
-            Console.WriteLine("║          /\\            | (_) | | |  | |    | |              |___ \\/_ |      ║");
-            Console.WriteLine("║         /  \\  _   _  __| |_| |_| |__| | ___| |_ __   ___ _ __ __) || |      ║");
-            Console.WriteLine("║        / /\\ \\| | | |/ _` | | __|  __  |/ _ \\ | '_ \\ / _ \\ '__|__ < | |      ║");
-            Console.WriteLine("║       / ____ \\ |_| | (_| | | |_| |  | |  __/ | |_) |  __/ |  ___) || |      ║");
-            Console.WriteLine("║      /_/    \\_\\__,_|\\__,_|_|\\__|_|  |_|\\___|_| .__/ \\___|_| |____(_)_|      ║");
-            Console.WriteLine("║                                              | |                            ║");
-            Console.WriteLine("║                                              |_|     by Krzysztof Lang, 2024║");
-            Console.WriteLine("╠═════════════════════════════════════════════════════════════════════════════╣");
-            Console.WriteLine("║                                                                             ║");
-            Console.WriteLine("║                                                                             ║");
+            Console.WriteLine(@"╔═════════════════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine(@"║                         _ _ _   _    _      _                ____  __       ║");
+            Console.WriteLine(@"║          /\            | (_) | | |  | |    | |              |___ \/_ |      ║");
+            Console.WriteLine(@"║         /  \  _   _  __| |_| |_| |__| | ___| |_ __   ___ _ __ __) || |      ║");
+            Console.WriteLine(@"║        / /\ \| | | |/ _` | | __|  __  |/ _ \ | '_ \ / _ \ '__|__ < | |      ║");
+            Console.WriteLine(@"║       / ____ \ |_| | (_| | | |_| |  | |  __/ | |_) |  __/ |  ___) || |      ║");
+            Console.WriteLine(@"║      /_/    \_\__,_|\__,_|_|\__|_|  |_|\___|_| .__/ \___|_| |____(_)_|      ║");
+            Console.WriteLine(@"║                                              | |                            ║");
+            Console.WriteLine(@"║                                              |_|     by Krzysztof Lang, 2024║");
+            Console.WriteLine(@"╠═════════════════════════════════════════════════════════════════════════════╣");
+            Console.WriteLine(@"║                                                                             ║");
+            Console.WriteLine(@"║                                                                             ║");
 
             string[] textLines = text.Split(';');
             foreach (string line in textLines)
