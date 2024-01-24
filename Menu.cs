@@ -1,6 +1,4 @@
-﻿using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-
-namespace AuditHelper3_1
+﻿namespace AuditHelper3_1
 {
     internal class Menu
     {
@@ -14,38 +12,48 @@ namespace AuditHelper3_1
         public static void MainMenu()
         {
             MenuUI($"{(data.StepsTaken["programs"]||data.StepsTaken["info"]||data.StepsTaken["user"] ? "Wybierz kolejną funkcję:;;" : "Wciśnij enter aby przprowadzić pełny audyt, lub wybierz funkcję:;;")}" +
-                $"1) Instalacja oprogramowania {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
-                $"2) Zbieranie informacji      {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
-                $"3) Tworzenie konta BITAdmin  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" + 
-                $"4) Wyjście");
+                $"1) Instalacja oprogramowania         {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
+                $"2) Zbieranie informacji              {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
+                $"3) Tworzenie kont administracyjnych  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" + 
+                $"4) Wyjście;;" +
+                $"Przed przeprowadzeniem audytu upewnij się, że przygotowano odpowiednie pakiety instalacyjne!");
 
+            ConsoleKey input;
             do
             {
-                switch (Console.ReadLine())
+                input = Console.ReadKey(true).Key;
+                switch (input)
                 {
-                    case "":
+                    case ConsoleKey.Enter:
                         Install.InstallPrograms(data, fullAudit: true);
                         Data.GetInfo(fullAudit: true);
-                        User.CreateUser(data, fullAudit: true);
+                        User.NewUsers(data, fullAudit: true);
                         MenuUI("Audyt zakończony.;;Naciśnij dowolny klawisz by zamknąć.");
                         Console.ReadKey();
                         Environment.Exit(0);
                         break;
-                    case "1":
+
+                    case ConsoleKey.D1:
+                    case ConsoleKey.NumPad1:
                         Install.InstallPrograms(data);
                         break;
-                    case "2":
+
+                    case ConsoleKey.D2:
+                    case ConsoleKey.NumPad2:
                         Data.GetInfo();
                         break;
-                    case "3":
-                        User.CreateUser(data);
+
+                    case ConsoleKey.D3:
+                    case ConsoleKey.NumPad3:
+                        User.NewUsers(data);
                         break;
-                    case "4":
+
+                    case ConsoleKey.D4:
+                    case ConsoleKey.NumPad4:
                         Environment.Exit(0);
                         break;
-                    default:
-                        MainMenu();
-                        break;
+
+                    default: break;
                 }
             }
             while (true);
@@ -71,9 +79,6 @@ namespace AuditHelper3_1
             string[] textLines = text.Split(';');
             foreach (string line in textLines)
             {
-                //string spaces = new string(' ', 73 - line.Length);
-                //Console.WriteLine("║    " + line + spaces + '║');
-
                 if (line.Length <= 69)
                 {
                     string spaces = new string(' ', 73 - line.Length);

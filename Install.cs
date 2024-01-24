@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Management;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AuditHelper3_1
 {
@@ -26,17 +25,16 @@ namespace AuditHelper3_1
             }
 
             data.StepsTaken["programs"] = true;
-            Console.ReadKey();
+            Console.ReadKey(true);
             if (fullAudit) return; else Menu.MainMenu();
         }
 
-        private static void InstallProgram(string programName, string installerName)
+        public static void InstallProgram(string programName, string installerName)
         {
             try
             {
                 Menu.MenuUI($"Trwa instalowanie {(programName)}.;;Proszę czekać...");
                 string filePath = Path.GetFullPath($@"Instalki\{(installerName)}");
-                Console.WriteLine(filePath);
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
