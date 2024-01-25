@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using System.DirectoryServices.AccountManagement;
+﻿using System.DirectoryServices.AccountManagement;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 
 
@@ -42,8 +42,24 @@ namespace AuditHelper3_1
         {
             if (data.DeviceName == "")
             {
-                Menu.MenuUI("Nie zebrano danych o komputerze, proszę wprowadzić nazwę wg standardu BetterIT:");
-                data.DeviceName = Console.ReadLine().ToUpper() ?? "";
+                string deviceNamePattern = @"^[A-Z]{3}-[A-Z]{3}[0-9]{2}$";
+                Regex rgx = new Regex(deviceNamePattern);
+
+                Menu.MenuUI("Nie zebrano informacji o komputerze, podaj nazwę BetterIT w formacie \"XYZ-ABC00\":");
+                while (true)
+                {
+                    data.DeviceName = Console.ReadLine() ?? "";
+                    data.DeviceName = data.DeviceName.ToUpper() ?? "";
+
+                    if (rgx.IsMatch(data.DeviceName))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Wpisano niepoprawną nazwę. Podaj nazwę BetterIT w formacie \"XYZ-ABC00\":");
+                    }
+                }
             }
 
             string userName = clientAdmin ? $"{(data.DeviceName.Substring(0, 3))}Admin_test" : "BITAdmin_test";

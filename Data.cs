@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AuditHelper3_1
 {
@@ -34,11 +35,45 @@ namespace AuditHelper3_1
             anyDeskID = GetAnyDeskID();
             anyDeskID = anyDeskID.TrimEnd('\r', '\n');
 
-            Menu.MenuUI("Podaj nazwę BetterIT:");
-            deviceName = Console.ReadLine().ToUpper() ?? "";
+            string deviceNamePattern = @"^[A-Z]{3}-[A-Z]{3}[0-9]{2}$";
+            Regex rgx = new Regex(deviceNamePattern);
 
-            Menu.MenuUI("Podaj użytkownika odpowiedzialnego:");
-            userName = Console.ReadLine() ?? "";
+
+            Menu.MenuUI("Podaj nazwę BetterIT w formacie \"XYZ-ABC00\":");
+            while (true)
+            {
+                deviceName = Console.ReadLine() ?? "";
+                deviceName = deviceName.ToUpper() ?? "";
+
+                if (rgx.IsMatch(deviceName))
+                {
+                    break;
+                }
+                else
+                {
+                    Menu.MenuUI("Wpisano niepoprawną nazwę. Podaj nazwę BetterIT w formacie \"XYZ-ABC00\":");
+                }
+            }
+
+            Menu.MenuUI("Podaj użytkownika odpowiedzialnego (imię i nazwisko), lub wpisz \"brak\" by pominąć:");
+            while (true)
+            {
+                userName = Console.ReadLine() ?? "";
+
+                if (userName == "brak")
+                {
+                    break;
+                }
+                else if (userName != null && userName.Split(' ').Length == 2)
+                {
+                    userName = string.Join(" ", userName.Split(' ').Select(word => char.ToUpper(word[0]) + word.Substring(1).ToLower()));
+                    break;
+                }
+                else
+                {
+                    Menu.MenuUI("Niepoprawne dane. Podaj użytkownika odpowiedzialnego (imię i nazwisko), lub wpisz \"brak\" by pominąć:");
+                }
+            }
 
             Menu.MenuUI("Podaj opcjonalny komentarz:");
             comment = Console.ReadLine() ?? "";
@@ -107,7 +142,7 @@ namespace AuditHelper3_1
             {
                 Menu.MenuUI("Nie wykryto zainstalowanego AnyDesk.;;" +
                     "1) Instaluj AnyDesk i spróbuj ponownie;2) Spróbuj ponownie bez instalacji;3) Kontynuuj;4) Zamknij program");
-                bool cont = false;
+
                 ConsoleKey input;
                 do
                 {

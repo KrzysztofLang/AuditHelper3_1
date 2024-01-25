@@ -25,13 +25,20 @@
                 switch (input)
                 {
                     case ConsoleKey.Enter:
-                        Install.InstallPrograms(data, fullAudit: true);
-                        Data.GetInfo(fullAudit: true);
-                        User.NewUsers(data, fullAudit: true);
-                        MenuUI("Audyt zakończony.;;Naciśnij dowolny klawisz by zamknąć.");
-                        Console.ReadKey();
-                        Environment.Exit(0);
-                        break;
+                        if (data.StepsTaken["programs"] || data.StepsTaken["info"] || data.StepsTaken["user"])
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Install.InstallPrograms(data, fullAudit: true);
+                            Data.GetInfo(fullAudit: true);
+                            User.NewUsers(data, fullAudit: true);
+                            MenuUI("Audyt zakończony.;;Naciśnij dowolny klawisz by zamknąć.");
+                            Console.ReadKey(true);
+                            Environment.Exit(0);
+                            break;
+                        }
 
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
