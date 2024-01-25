@@ -192,7 +192,7 @@ namespace AuditHelper3_1
                 csv.NextRecord();
             }
             Menu.MenuUI("Zapisano dane do pliku.;;Naciśnij dowolny przycisk by kontynuować.");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
     }
 }

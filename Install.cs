@@ -38,7 +38,7 @@ namespace AuditHelper3_1
 
                 Process process = new Process();
                 process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{(filePath)}\"";
+                process.StartInfo.Arguments = $"/i \"{(filePath)}\" /passive";
                 process.Start();
                 process.WaitForExit();
                 Menu.MenuUI($"Zainstalowano {(programName)}.;;Naciśnij dowolny przycisk by kontynuować.");
