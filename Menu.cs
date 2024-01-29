@@ -61,14 +61,19 @@
 
                     case ConsoleKey.D4:
                     case ConsoleKey.NumPad4:
-                        MenuUI("Zależnie od potrzeb, program może być użyty w jeden z 2 sposobów: pełen audyt lub ręcznie wybierając poszczególne funkcje. W przypadku pełnego audytu, funkcje wykonywane są w kolejności: " +
+                        MenuUI("Przed rozpoczęciem audytu upewnij się, że odpowiednie pliki instalacyjne znajdują się w folderze \"Instalki\", znajdującym sie w tej samej lokalizacji co program." +
+                            "Te pliki to:;" +
+                            "   - AnyDesk_BetterIT_ACL.msi;" +
+                            "   - nVAgentInstall.msi;" +
+                            "   - Odpowiednio przygotowane pliki do instalacji OpenAudit, w tym skrypt INSTALL.bat;;" +
+                            "Zależnie od potrzeb, program może być użyty w jeden z 2 sposobów: pełen audyt lub ręcznie wybierając poszczególne funkcje. W przypadku pełnego audytu, funkcje wykonywane są w kolejności: " +
                             "instalacja oprogramowania, zbieranie informacji, tworzenie kont administracyjnych;;" +
                             "Opis funkcji:;" +
-                            "   1. Instalacja oprogramowania - Najpierw sprawdzane jest, czy na komputerze zainstalowane są AnyDesk i agent nVision. Następnie instalowane są te programy których na komputerze brakuje. " +
+                            "   - Instalacja oprogramowania - Najpierw sprawdzane jest, czy na komputerze zainstalowane są AnyDesk i agent nVision. Następnie instalowane są te programy których na komputerze brakuje. " +
                             "Na koniec dodawany jest wpis do Harmonogramu Zadań uruchamiający komunikację z OpenAudit.;" +
-                            "   2. Zbieranie informacji - Automatycznie sprawdzane są: hostname, AnyDeskID. Następnie przeprowadzający audyt wprowadza: nazwę nadaną według standardu BetterIT, użytkownika odpowiedzialnego, " +
+                            "   - Zbieranie informacji - Automatycznie sprawdzane są: hostname, AnyDeskID. Następnie przeprowadzający audyt wprowadza: nazwę nadaną według standardu BetterIT, użytkownika odpowiedzialnego, " +
                             "opcjonalny komentarz. Dane są zapisywane do pliku o nazwie XYZ_dane.csv, gdzie XYZ to trzyliterowy skrót klienta.;" +
-                            "   3. Tworzenie kont administracyjnych - Po weryfikacji czy takie konto już nie istnieje w systemie, automatycznie tworzone jest konto administratora o nazwie BITAdmin, " +
+                            "   - Tworzenie kont administracyjnych - Po weryfikacji czy takie konto już nie istnieje w systemie, automatycznie tworzone jest konto administratora o nazwie BITAdmin, " +
                             "wraz z losowo generowanym bezpiecznym hasłem. Następnie przedstawiany jest wybór czy tworzyć konto administracyjne dla klienta. " +
                             "W przypadku zgody, tworzone jest konto o nazwie XYZAdmin, gdzie XYZ to trzyliterowy skrót klienta, wraz z nowo generowanym bezpiecznym hasłem. Dane utworzonych kont zapisywane sa w pliku " +
                             "o nazwie XYZ_pwd.csv, gdzie XYZ to trzyliterowy skrót klienta. Sam plik jest sformatowany w sposób pozwalający na import do bazy Bitwarden.;;" +
