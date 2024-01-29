@@ -16,17 +16,19 @@
             ConsoleKey input;
             do
             {            
-                MenuUI($"{(data.StepsTaken["programs"]||data.StepsTaken["info"]||data.StepsTaken["user"] ? "Wybierz kolejną funkcję:;;" : "Wciśnij enter aby przprowadzić pełny audyt, lub wybierz funkcję:;;")}" +
-                $"1) Instalacja oprogramowania         {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
-                $"2) Zbieranie informacji              {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
-                $"3) Tworzenie kont administracyjnych  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" +
-                $"4) Informacje o programie;;" + 
-                $"q) Wyjście;;");
+                MenuUI($"Wybierz funkcję:;;" +
+                    $"{(data.StepsTaken["programs"]||data.StepsTaken["info"]||data.StepsTaken["user"] ? "" : "a) Pełen audyt;;")}" +
+                    $"1) Instalacja oprogramowania         {(data.StepsTaken["programs"] ? "(gotowe)" : "")};" + 
+                    $"2) Zbieranie informacji              {(data.StepsTaken["info"] ? "(gotowe)" : "")};" + 
+                    $"3) Tworzenie kont administracyjnych  {(data.StepsTaken["user"] ? "(gotowe)" : "")};;" +
+                    $"4) Informacje o programie;;" + 
+                    $"q) Wyjście;;;" +
+                    $"Hostname urządzenia: {(data.Hostname)}");
 
                 input = Console.ReadKey(true).Key;
                 switch (input)
                 {
-                    case ConsoleKey.Enter:
+                    case ConsoleKey.A:
                         if (data.StepsTaken["programs"] || data.StepsTaken["info"] || data.StepsTaken["user"])
                         {
                             break;
@@ -59,7 +61,19 @@
 
                     case ConsoleKey.D4:
                     case ConsoleKey.NumPad4:
-                        MenuUI("Nie interesuj sie bo kotem w morde dostaniesz >:(");
+                        MenuUI("Zależnie od potrzeb, program może być użyty w jeden z 2 sposobów: pełen audyt lub ręcznie wybierając poszczególne funkcje. W przypadku pełnego audytu, funkcje wykonywane są w kolejności: " +
+                            "instalacja oprogramowania, zbieranie informacji, tworzenie kont administracyjnych;;" +
+                            "Opis funkcji:;" +
+                            "   1. Instalacja oprogramowania - Najpierw sprawdzane jest, czy na komputerze zainstalowane są AnyDesk i agent nVision. Następnie instalowane są te programy których na komputerze brakuje. " +
+                            "Na koniec dodawany jest wpis do Harmonogramu Zadań uruchamiający komunikację z OpenAudit.;" +
+                            "   2. Zbieranie informacji - Automatycznie sprawdzane są: hostname, AnyDeskID. Następnie przeprowadzający audyt wprowadza: nazwę nadaną według standardu BetterIT, użytkownika odpowiedzialnego, " +
+                            "opcjonalny komentarz. Dane są zapisywane do pliku o nazwie XYZ_dane.csv, gdzie XYZ to trzyliterowy skrót klienta.;" +
+                            "   3. Tworzenie kont administracyjnych - Po weryfikacji czy takie konto już nie istnieje w systemie, automatycznie tworzone jest konto administratora o nazwie BITAdmin, " +
+                            "wraz z losowo generowanym bezpiecznym hasłem. Następnie przedstawiany jest wybór czy tworzyć konto administracyjne dla klienta. " +
+                            "W przypadku zgody, tworzone jest konto o nazwie XYZAdmin, gdzie XYZ to trzyliterowy skrót klienta, wraz z nowo generowanym bezpiecznym hasłem. Dane utworzonych kont zapisywane sa w pliku " +
+                            "o nazwie XYZ_pwd.csv, gdzie XYZ to trzyliterowy skrót klienta. Sam plik jest sformatowany w sposób pozwalający na import do bazy Bitwarden.;;" +
+                            "Przogram przygotowany przez Krzysztof Lang, na potrzeby BetterIT/MH-info sp. z o.o.;;" +
+                            "Naciśnij dowolny przycisk by wrócić do menu.");
                         Console.ReadKey(true);
                         break;
 
@@ -83,7 +97,7 @@
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(@"╔═════════════════════════════════════════════════════════════════════════════╗");
+            Console.WriteLine("╔═════════════════════════════════════════════════════════════════════════════╗");
             PrintColoredText(@"║                        _ _ _   _    _      _                  ____  __      ║");
             PrintColoredText(@"║         /\            | (_) | | |  | |    | |                |___ \/_ |     ║");
             PrintColoredText(@"║        /  \  _   _  __| |_| |_| |__| | ___| |_ __   ___ _ __   __) || |     ║");
@@ -92,9 +106,9 @@
             PrintColoredText(@"║     /_/    \_\__,_|\__,_|_|\__|_|  |_|\___|_| .__/ \___|_|   |____(_)_|     ║");
             PrintColoredText(@"║                                             | |                             ║");
             PrintColoredText(@"║                                             |_|                             ║");
-            Console.WriteLine(@"╠═════════════════════════════════════════════════════════════════════════════╣");
-            Console.WriteLine(@"║                                                                             ║");
-            Console.WriteLine(@"║                                                                             ║");
+            Console.WriteLine("╠═════════════════════════════════════════════════════════════════════════════╣");
+            Console.WriteLine("║                                                                             ║");
+            Console.WriteLine("║                                                                             ║");
 
             string[] textLines = text.Split(';');
             foreach (string line in textLines)

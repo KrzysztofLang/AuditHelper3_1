@@ -9,8 +9,7 @@ namespace AuditHelper3_1
 {
     internal class Data
     {
-        private static string hostname = System.Environment.MachineName;
-
+        private static string hostname = "";
         private static string anyDeskID = "";
         private static string deviceName = "";
         private static string userName = "";
@@ -19,6 +18,7 @@ namespace AuditHelper3_1
         private static Dictionary<string, bool> stepsTaken = new Dictionary<string, bool>();
         public Dictionary<string, bool> StepsTaken { get => stepsTaken; }
         public string DeviceName { get => deviceName; set => deviceName = value; }
+        public string Hostname { get => hostname; set => hostname = value; }
 
         [DllImport("mpr.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int WNetGetConnection([MarshalAs(UnmanagedType.LPTStr)] string localName, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder remoteName, ref int length);
@@ -28,6 +28,8 @@ namespace AuditHelper3_1
             stepsTaken.Add("info", false);
             stepsTaken.Add("user", false);
             stepsTaken.Add("programs", false);
+
+            hostname = System.Environment.MachineName;
         }
 
         public static void GetInfo(bool returnToMenu = true, bool fullAudit = false)
@@ -191,7 +193,7 @@ namespace AuditHelper3_1
                 foreach (var item in values) { csv.WriteField(item); }
                 csv.NextRecord();
             }
-            Menu.MenuUI("Zapisano dane do pliku.;;Naciśnij dowolny przycisk by kontynuować.");
+            Menu.MenuUI($"Zapisano dane do pliku {(deviceName.Substring(0, 3))}_{(fileName)}.csv.;;Naciśnij dowolny przycisk by kontynuować.");
             Console.ReadKey(true);
         }
     }

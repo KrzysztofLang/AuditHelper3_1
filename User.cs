@@ -62,7 +62,7 @@ namespace AuditHelper3_1
                 }
             }
 
-            string userName = clientAdmin ? $"{(data.DeviceName.Substring(0, 3))}Admin_test" : "BITAdmin_test";
+            string userName = clientAdmin ? $"{(data.DeviceName.Substring(0, 3))}Admin" : "BITAdmin";
             string fullUserName = $"Administrator lokalny {(clientAdmin ? data.DeviceName.Substring(0, 3) : "BetterIT")}";
             string groupNamePL = "Administratorzy"; 
             string groupNameEN = "Administrators";
@@ -132,7 +132,6 @@ namespace AuditHelper3_1
                 }
             }
         }
-
         private static string GenerateRandomPassword()
         {
             const int passwordLength = 10;
@@ -153,7 +152,5 @@ namespace AuditHelper3_1
 
             return new string(chars);
         }
-
-
     }
 }
