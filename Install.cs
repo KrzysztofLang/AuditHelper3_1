@@ -58,7 +58,6 @@ namespace AuditHelper3_1
                 Menu.MenuUI("Trwa instalowanie OpenAudit.;;Prosze czekać...");
                 
                 string filePath = Path.GetFullPath($@"Instalki\INSTALL.bat");
-                Console.WriteLine(filePath);
 
                 Process process = new Process();
                 process.StartInfo.FileName = "cmd.exe";
@@ -70,7 +69,6 @@ namespace AuditHelper3_1
                 process.WaitForExit();
 
                 Menu.MenuUI("Zainstalowano OpenAudit.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.WriteLine(filePath);
                 Console.ReadKey();
             }
             catch
