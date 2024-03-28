@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /PROTECTAgentInstaller.bat
+/AnyDesk_BetterIT_ACL.msi
+/nVAgentInstall.msi
