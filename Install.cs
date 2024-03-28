@@ -7,42 +7,63 @@ namespace AuditHelper3_1
     {
         public static void InstallPrograms(Data data, bool fullAudit = false)
         {
+            Dictionary<string, string> programs = new Dictionary<string, string>();
+            programs.Add("AnyDesk", "AnyDesk BetterIT");
+            programs.Add("nVision", "nVision Agent");
+            programs.Add("ESET Agent", "ESET Management Agent");
 
-            var (foundAnyDesk, foundNvision) = CheckInstalled();
+            Dictionary<string, bool> installed = CheckInstalled(programs);
 
-            InstallOpenAudit();
+            Installer("OpenAudIT", "INSTALL.bat");
 
-            if (foundAnyDesk && foundNvision)
+            if (installed.Values.All(value => value == true))
             {
-                Menu.MenuUI("AnyDesk oraz nVision są już zainstalowane.;;Naciśnij dowolny przycisk by kontynuować.");
+                Menu.MenuUI("AnyDesk oraz agenty nVision i Eset są już zainstalowane.");
+                Thread.Sleep(3000);
             }
             else
             {
-                if (!foundAnyDesk) {InstallProgram("AnyDesk", "AnyDesk_BetterIT_ACL.msi");}
-                if (!foundNvision) {InstallProgram("nVision", "nVAgentInstall.msi");}
+                if (!installed["AnyDesk"]) {Installer("AnyDesk", "AnyDesk_BetterIT_ACL.msi");}
+                if (!installed["nVision"]) {Installer("nVision", "nVAgentInstall.msi");}
+                if (!installed["ESET Agent"]) {Installer("ESET Agent", "PROTECTAgentInstaller.bat");}
 
-                Menu.MenuUI("Zakończono instalację programów.;;Naciśnij dowolny przycisk by kontynuować.");
+                Menu.MenuUI("Zakończono instalację programów.");
+                Thread.Sleep(3000);
             }
 
             data.StepsTaken["programs"] = true;
-            Console.ReadKey(true);
             if (fullAudit) return; else Menu.MainMenu();
         }
 
-        public static void InstallProgram(string programName, string installerName)
+        public static void Installer(string programName, string installerName)
         {
             try
             {
                 Menu.MenuUI($"Trwa instalowanie {(programName)}.;;Proszę czekać...");
                 string filePath = Path.GetFullPath($@"Instalki\{(installerName)}");
 
-                Process process = new Process();
-                process.StartInfo.FileName = "msiexec.exe";
-                process.StartInfo.Arguments = $"/i \"{(filePath)}\" /passive";
-                process.Start();
-                process.WaitForExit();
-                Menu.MenuUI($"Zainstalowano {(programName)}.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
+                if (installerName.Substring(installerName.Length - 3) == "bat")
+                {
+                    Process process = new Process();
+                    process.StartInfo.FileName = "cmd.exe";
+                    process.StartInfo.Arguments = $"/c \"{filePath}\"";
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.Start();
+                    process.WaitForExit();
+                }
+                else if (installerName.Substring(installerName.Length - 3) == "msi")
+                {
+                    Process process = new Process();
+                    process.StartInfo.FileName = "msiexec.exe";
+                    process.StartInfo.Arguments = $"/i \"{(filePath)}\" /passive";
+                    process.Start();
+                    process.WaitForExit();
+                }
+
+                Menu.MenuUI($"Zainstalowano {(programName)}.");
+                Thread.Sleep(3000);
             }
             catch
             {
@@ -51,39 +72,16 @@ namespace AuditHelper3_1
             }
         }
 
-        private static void InstallOpenAudit()
-        {
-            try
-            {
-                Menu.MenuUI("Trwa instalowanie OpenAudit.;;Prosze czekać...");
-                
-                string filePath = Path.GetFullPath($@"Instalki\INSTALL.bat");
-
-                Process process = new Process();
-                process.StartInfo.FileName = "cmd.exe";
-                process.StartInfo.Arguments = $"/c \"{filePath}\"";
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
-                process.WaitForExit();
-
-                Menu.MenuUI("Zainstalowano OpenAudit.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-            }
-            catch
-            {
-                Menu.MenuUI("Napotkano problem podczas instalacji OpenAudit. Spróbuj zainstalować ręcznie.;;Naciśnij dowolny przycisk by kontynuować.");
-                Console.ReadKey();
-            }
-        }
-
-        private static Tuple<bool, bool> CheckInstalled()
+        private static Dictionary<string, bool> CheckInstalled(Dictionary<string, string> programs)
         {
             Menu.MenuUI("Trwa weryfikacja zainstalowanych programów.;;Proszę czekać...");
 
-            bool installedAnyDesk = false;
-            bool installedNvision = false;
+            Dictionary<string, bool> installed = new Dictionary<string, bool>();
+
+            foreach (var key in programs.Keys)
+            {
+                installed[key] = false;
+            }
 
             ManagementObjectSearcher mos = new ManagementObjectSearcher("SELECT * FROM Win32_Product");
 
@@ -93,13 +91,15 @@ namespace AuditHelper3_1
 
                 if (name == null) continue;
 
-                installedAnyDesk |= name.Contains("AnyDesk BetterIT");
-                installedNvision |= name.Contains("nVision Agent");
+                foreach(var key in installed.Keys)
+                {
+                    installed[key] |= name.Contains(programs[key]);
+                }
 
-                if (installedAnyDesk && installedNvision) break;
+                if (installed.Values.All(value => value == true)) break;
             }
 
-            return Tuple.Create(installedAnyDesk, installedNvision);
+            return installed;
         }
     }
 }

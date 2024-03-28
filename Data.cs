@@ -153,7 +153,7 @@ namespace AuditHelper3_1
                     {
                         case ConsoleKey.D1:
                         case ConsoleKey.NumPad1:
-                            Install.InstallProgram("AnyDesk", "AnyDesk_BetterIT_ACL.msi");
+                            Install.Installer("AnyDesk", "AnyDesk_BetterIT_ACL.msi");
                             GetAnyDeskID();
                             break;
                         case ConsoleKey.D2:
